@@ -1,0 +1,19 @@
+{
+  "name": "darkchess",
+  "version": "0.0.1",
+  "description": "HTML5 Dark Chess with magic",
+  "main": "index.html",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/RandomVision/darkchess.git"
+  },
+  "author": "Edoardo Tenani <edoardo.tenani@gmail.com> (http://about.me/edoardo.tenani)",
+  "license": "MIT",
+  "bugs": {
+    "url": "https://github.com/RandomVision/darkchess/issues"
+  },
+  "homepage": "https://github.com/RandomVision/darkchess#readme"
+}
