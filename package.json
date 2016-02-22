@@ -4,7 +4,8 @@
   "description": "HTML5 Dark Chess with magic",
   "main": "index.html",
   "scripts": {
-    "test": "echo \"Error: no test specified\" && exit 1"
+    "test": "echo \"Error: no test specified\" && exit 1",
+    "serve": "./node_modules/.bin/browser-sync start --config bs-config.js"
   },
   "repository": {
     "type": "git",
@@ -15,5 +16,8 @@
   "bugs": {
     "url": "https://github.com/RandomVision/darkchess/issues"
   },
-  "homepage": "https://github.com/RandomVision/darkchess#readme"
+  "homepage": "https://github.com/RandomVision/darkchess#readme",
+  "devDependencies": {
+    "browser-sync": "^2.11.1"
+  }
 }
