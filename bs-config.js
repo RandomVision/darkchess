@@ -19,7 +19,13 @@ module.exports = {
             "port": 8080
         }
     },
-    "files": [ "app/index.html", "app/css/{,*/}*.css", "app/js/{,*/}.js" ],
+    "files": [ 
+        "app/{,*/}*.html", 
+        "app/css/{,*/}*.css", 
+        "app/js/{,*/}.js",
+        "app/vendor/{,*/}*.css",
+        "app/vendor/{,*/}*.js",
+    ],
     "watchOptions": {},
     "server": {
         baseDir: "app"
