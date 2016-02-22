@@ -11,7 +11,7 @@
     "url": "git+https://github.com/RandomVision/darkchess.git"
   },
   "author": "Edoardo Tenani <edoardo.tenani@gmail.com> (http://about.me/edoardo.tenani)",
-  "license": "MIT",
+  "license": "GPLv3",
   "bugs": {
     "url": "https://github.com/RandomVision/darkchess/issues"
   },
