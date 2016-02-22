@@ -22,7 +22,7 @@ module.exports = {
     "files": [ 
         "app/{,*/}*.html", 
         "app/css/{,*/}*.css", 
-        "app/js/{,*/}.js",
+        "app/js/{,*/}*.js",
         "app/vendor/{,*/}*.css",
         "app/vendor/{,*/}*.js",
     ],
