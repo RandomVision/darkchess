@@ -30,6 +30,11 @@ var routes = require('./lib/routes_loader.js')()
 // app.use('/', routes.root)
 
 //
+// setup error handlers
+//
+require('./lib/error_handlers.js')(app)
+
+//
 // launch app server
 // 
 var server = require('http').createServer(app).listen(4000, function () { console.log('listening...') })
