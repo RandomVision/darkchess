@@ -1,0 +1,31 @@
+<!DOCTYPE html>
+<html>
+<head>
+  <title>Play</title>
+</head>
+<body>
+  <h1>Play game <%= game.hid %></h1>
+  
+  <p><a href="#" onclick="move()">Move</a></p>
+
+  <p>Game</p> 
+
+  <!-- socketio -->
+  <script type="text/javascript" src="/socket.io/socket.io.js"></script>
+  <script>
+    function move() {
+      socket.emit('game.move')      
+    }
+
+    var socket = io.connect('/<%= game.hid %>')
+
+    socket.on('game.canstart', function (data) { console.log('ok to play', data) })
+
+    socket.on('board.update', function (data) {
+      console.log(data)
+    })
+
+    // socket.on('move')
+  </script>
+</body>
+</html>
