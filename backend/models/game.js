@@ -29,6 +29,18 @@ Game.prototype.addPlayer = function addPlayer (player) {
   }
 }
 
+Game.prototype.removePlayer = function removePlayer (player) {
+  var self = this
+
+  if (player.role) {
+    if (player.role === 'w') {
+      self.players.white = null
+    } else if (player.role === 'b') {
+      self.players.black = null
+    }
+  }
+}
+
 Game.prototype.canStart = function canStart () {
   var self = this
 

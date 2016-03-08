@@ -37,25 +37,30 @@ function initSocket (ghid, io) {
       })
       game.addPlayer(player)
       console.log(player.role)
+      socket.emit('game.player', { player: player })
     }
 
     if (connectedClients == 2) {
       game.start()
-      io.emit('game.canstart', game.engine.fen())
+      io.emit('game.canstart', { fen: game.engine.fen() })
     }
 
     socket.on('game.move', function (move) {
       // game.engine exists only if game has begun
       if (game.engine) {
-        console.log(socket.id, 'move')
+        console.log(socket.id, 'move', move)
+        console.log(player.role == game.engine.turn())
+        console.log(game.engine.game_over())
+        console.log(game.engine.moves())
         if (player.role == game.engine.turn()) {
           if (!game.engine.game_over()) {
             // random guy vs random guy
             var moves = game.engine.moves()
-            var move = moves[Math.floor(Math.random() * moves.length)]
-            if (_.includes(moves, move)) {
-              game.engine.move(move)
-              io.emit('board.update', game.fogOfWar())
+            // var move = moves[Math.floor(Math.random() * moves.length)]
+            console.log(_.includes(moves, move.san))
+            if (_.includes(moves, move.san)) {
+              game.engine.move(move.san)
+              io.emit('board.update', { fen: game.fogOfWar() })
               console.log(game.engine.ascii())
             }
           }
@@ -68,6 +73,7 @@ function initSocket (ghid, io) {
     socket.on('disconnect', function(){
       connectedClients -= 1
       console.log(socket.id + ' disconnected')
+      game.removePlayer(player)
       if (connectedClients == 0) {
         EventBus.emit('game.destroy', game)
       }

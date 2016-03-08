@@ -23,7 +23,8 @@ app.set('views', path.join(__dirname, 'views'))
 // middlewares
 //
 app.use(logger('dev'))
-app.use(express.static(path.join(__dirname, '..', 'app')))
+// app.use(express.static(path.join(__dirname, '..', 'app')))
+app.use(express.static(path.join(__dirname, 'public')))
 app.use(bodyParser.urlencoded())
 app.use(session({ secret: 'asdqwepoilkj', maxAge: null, resave: false, saveUninitialized: true }))
 
