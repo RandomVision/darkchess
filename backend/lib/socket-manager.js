@@ -42,7 +42,7 @@ function initSocket (ghid, io) {
 
     if (connectedClients == 2) {
       game.start()
-      io.emit('game.canstart', { fen: game.engine.fen() })
+      io.emit('game.canstart', { fen: game.fen(), fog: game.fogOfWar() })
     }
 
     socket.on('game.move', function (move) {
