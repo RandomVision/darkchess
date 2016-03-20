@@ -10,7 +10,7 @@ var game = new Chess()
 
 // implementation 3 ############################################################
 
-var Board = require('./services/fogOfWar.js')
+var Fof = require('./services/fogOfWar.js')
 
 // var b = Board(game)
 // console.log(b.calculateFen())
@@ -20,22 +20,37 @@ var Board = require('./services/fogOfWar.js')
   Castling availability SHOULD BE REMOVED
  */
 
-console.log('ascii\n', game.ascii())
-console.log('fog fen', Board(game).calculateFen())
-console.log('whoami', game.turn())
-console.log(Chess(Board(game).calculateFen()).ascii())
-
-var index = 0
-while (!game.game_over() && index < 3) {
-  var moves = game.moves()
-  var move = moves[Math.floor(Math.random() * moves.length)]
-  game.move(move)
-  console.log('ascii\n', game.ascii())
-  console.log('fog fen', Board(game).calculateFen())
+function printStatus (game) {
+  console.log('ascii')
+  console.log(game.ascii())
+  console.log('fog fen', Fof.calculateFogFen(game))
   console.log('whoami', game.turn())
-  console.log(Chess(Board(game).calculateFen()).ascii())
-  index += 1
+  console.log(Chess(Fof.calculateFogFen(game)).ascii())
+  console.log(Chess(Fof.calculateOppositeFogFen(game)).ascii())
 }
+
+printStatus(game)
+console.log('==================================================')
+
+game.move('e4')
+printStatus(game)
+console.log('==================================================')
+
+game.move('f5')
+printStatus(game)
+console.log('==================================================')
+
+// var index = 0
+// while (!game.game_over() && index < 10) {
+//   var moves = game.moves()
+//   var move = moves[Math.floor(Math.random() * moves.length)]
+//   game.move(move)
+//   console.log('ascii\n', game.ascii())
+//   console.log('fog fen', Fof.calculateFogFen(game))
+//   console.log('whoami', game.turn())
+//   console.log(Chess(Fof.calculateFogFen(game)).ascii())
+//   index += 1
+// }
 
  
 
