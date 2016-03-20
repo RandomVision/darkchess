@@ -3,6 +3,7 @@ var _ = require('lodash')
 var gameManager = require('../services/game-manager.js')
 var Player = require('../models/player.js')
 var EventBus = require('../lib/event-bus.js')
+var Fof = require('../services/fogOfWar.js')
 
 module.exports = function (io) {
   var namespaces = {}
@@ -42,7 +43,13 @@ function initSocket (ghid, io) {
 
     if (connectedClients == 2) {
       game.start()
-      io.emit('game.canstart', { fen: game.fen(), fog: game.fogOfWar() })
+      if (player.role === 'w') {
+        socket.emit('game.canstart', { fen: game.fen(), fog: Fof.calculateWhiteFogFen(game.engine) })
+        socket.broadcast.emit('game.canstart', { fen: game.fen(), fog: Fof.calculateBlackFogFen(game.engine) })
+      } else {
+        socket.emit('game.canstart', { fen: game.fen(), fog: Fof.calculateBlackFogFen(game.engine) })
+        socket.broadcast.emit('game.canstart', { fen: game.fen(), fog: Fof.calculateWhiteFogFen(game.engine) })
+      }
     }
 
     socket.on('game.move', function (move) {
@@ -60,7 +67,13 @@ function initSocket (ghid, io) {
             console.log(_.includes(moves, move.san))
             if (_.includes(moves, move.san)) {
               game.engine.move(move.san)
-              io.emit('board.update', { fen: game.fen(), fog: game.fogOfWar() })
+              socket.broadcast.emit('board.update', { fen: game.fen(), fog: Fof.calculateFogFen(game.engine) })
+              // io.emit('board.update', { fen: game.fen(), fog: game.fogOfWar() })
+              if (game.engine.turn() === 'w') {
+                socket.emit('board.update', { fen: game.fen(), fog: Fof.calculateBlackFogFen(game.engine) })
+              } else {
+                socket.emit('board.update', { fen: game.fen(), fog: Fof.calculateWhiteFogFen(game.engine) })
+              }
               console.log(game.engine.ascii())
             }
           }
