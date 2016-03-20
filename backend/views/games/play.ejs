@@ -36,16 +36,16 @@
     })
 
     socket.on('game.canstart', function (data) {
-      console.log('ok to play', data.fen)
-      window.game.load(data.fen)
-      window.board.position(data.fen)
+      console.log('ok to play', data.fog)
+      window.game.load(data.fog)
+      window.board.position(data.fog)
       setPlayer()
     })
 
     socket.on('board.update', function (data) {
       console.log(data)
-      window.game.load(data.fen)
-      window.board.position(data.fen)
+      window.game.load(data.fog)
+      window.board.position(data.fog)
       setPlayer()
     })
 
