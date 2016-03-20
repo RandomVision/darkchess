@@ -57,9 +57,9 @@ function initSocket (ghid, io) {
             // random guy vs random guy
             var moves = game.engine.moves()
             // var move = moves[Math.floor(Math.random() * moves.length)]
-            console.log(_.includes(moves, move.san))
-            if (_.includes(moves, move.san)) {
-              game.engine.move(move.san)
+            console.log(_.includes(moves, move.to))
+            if (_.includes(moves, move.to)) {
+              game.engine.move(move.to)
               io.emit('board.update', { fen: game.fen(), fog: game.fogOfWar() })
               console.log(game.engine.ascii())
             }
