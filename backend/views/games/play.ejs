@@ -12,6 +12,8 @@
 
   <h2>Game</h2> 
 
+  <p>Turn: <strong><span id="current_player"></span></strong></p>
+
   <div id="board" style="width: 500px"></div>
 
   <!-- socketio -->
@@ -37,13 +39,23 @@
       console.log('ok to play', data.fen)
       window.game.load(data.fen)
       window.board.position(data.fen)
+      setPlayer()
     })
 
     socket.on('board.update', function (data) {
       console.log(data)
       window.game.load(data.fen)
       window.board.position(data.fen)
+      setPlayer()
     })
+
+    function setPlayer () {
+      if (game.turn() === 'b') {
+        $('#current_player').text('black')
+      } else {
+        $('#current_player').text('white')
+      }
+    }
 
     // socket.on('move')
   </script>
