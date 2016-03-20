@@ -19,16 +19,7 @@ var Board = function Board (game) {
 
   this.fen = game.fen().split(' ').slice(1)
 
-  this.rows = {
-    '8': [],
-    '7': [],
-    '6': [],
-    '5': [],
-    '4': [],
-    '3': [],
-    '2': [],
-    '1': [],
-  }
+  this.rows = { '8': [], '7': [], '6': [], '5': [], '4': [], '3': [], '2': [], '1': [] }
 
   function fillRows() {
     var self = this
@@ -45,11 +36,11 @@ var Board = function Board (game) {
   }
   fillRows()
 
-  this.calculateFen = function calculateFen () {
+  this.calculateFen = function calculateFen (turn) {
     var self = this
     var fen = ''
     var moves = _.uniq(_.map(self.game.moves({ verbose: true }), function(move) { return move.to }))
-    var turn = self.game.turn()
+    var turn = _.isUndefined(turn) ? self.game.turn() : turn
 
     _.each(_.values(self.rows), function (row) {
       _.each(row, function (position) {
@@ -83,4 +74,21 @@ var Board = function Board (game) {
 }
 
 
-module.exports = Board
+module.exports = {
+  calculateFogFen: function (game) {
+    return Board(game).calculateFen()
+  },
+  calculateOppositeFogFen: function (game) {
+    if (game.turn() === 'w') {
+      return Board(game).calculateFen('b')
+    } else {
+      return Board(game).calculateFen('w')
+    }
+  },
+  calculateWhiteFogFen: function (game) {
+    return Board(game).calculateFen('w')
+  },
+  calculateBlackFogFen: function (game) {
+    return Board(game).calculateFen('b')
+  }
+}
