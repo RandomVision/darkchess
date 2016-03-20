@@ -13,6 +13,7 @@
   <h2>Game</h2> 
 
   <p>Turn: <strong><span id="current_player"></span></strong></p>
+  <p>Who am I: <strong><span id="whoami"></span></strong></p>
 
   <div id="board" style="width: 500px"></div>
 
@@ -32,6 +33,7 @@
 
     socket.on('game.player', function (data) {
       console.log('player:' + data.player.role)
+      $('#whoami').text(data.player.role)
       window.player = data.player
     })
 
