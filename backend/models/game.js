@@ -2,6 +2,7 @@
 var utils = require('../lib/utils.js')
 var Board = require('../services/fogOfWar.js')
 
+var _ = require('lodash')
 var Chess = require('chess.js').Chess
 
 function Game (opts) {
@@ -69,6 +70,14 @@ Game.prototype.start = function start () {
   }
 
   return self
+}
+
+Game.prototype.isValidMove = function isValidMove (move) {
+  var self = this
+  var moves = self.engine.moves()
+
+  moves = _.map(moves, function (m) { return m.replace('#', '').replace('+', '') })
+  return _.includes(moves, move)
 }
 
 module.exports = Game
