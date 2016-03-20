@@ -51,6 +51,12 @@
       setPlayer()
     })
 
+    socket.on('move.invalid', function () {
+      console.warn('invalid move')
+      window.game.undo()
+      window.board.position(game.fen())
+    })
+
     function setPlayer () {
       if (game.turn() === 'b') {
         $('#current_player').text('black')

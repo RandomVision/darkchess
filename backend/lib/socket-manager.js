@@ -64,9 +64,10 @@ function initSocket (ghid, io) {
             // random guy vs random guy
             var moves = game.engine.moves()
             // var move = moves[Math.floor(Math.random() * moves.length)]
-            console.log(_.includes(moves, move.san))
-            if (_.includes(moves, move.san)) {
-              game.engine.move(move.san)
+            var san = move.san.replace('#', '')
+            console.log(san, _.includes(moves, san))
+            if (game.isValidMove(san)) {
+              game.engine.move(san)
               socket.broadcast.emit('board.update', { fen: game.fen(), fog: Fof.calculateFogFen(game.engine) })
               // io.emit('board.update', { fen: game.fen(), fog: game.fogOfWar() })
               if (game.engine.turn() === 'w') {
@@ -75,6 +76,8 @@ function initSocket (ghid, io) {
                 socket.emit('board.update', { fen: game.fen(), fog: Fof.calculateWhiteFogFen(game.engine) })
               }
               console.log(game.engine.ascii())
+            } else {
+              socket.emit('move.invalid')
             }
           }
         } 
