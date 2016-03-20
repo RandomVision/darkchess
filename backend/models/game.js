@@ -1,5 +1,6 @@
 
 var utils = require('../lib/utils.js')
+var Board = require('../services/fogOfWar.js')
 
 var Chess = require('chess.js').Chess
 
@@ -8,6 +9,8 @@ function Game (opts) {
 
   self.id = opts.id
   self.hid = utils.hashids.encode(opts.id)
+
+  self.engine = null
 
   self.players = {
     white: null,
@@ -47,10 +50,15 @@ Game.prototype.canStart = function canStart () {
   return !!(self.players.white && self.players.black)
 }
 
+Game.prototype.fen = function fen () {
+  var self = this
+  return self.engine.fen()
+}
+
 Game.prototype.fogOfWar = function fogOfWar () {
   var self = this
-
-  return self.engine.fen()
+  var board = Board(self.engine)
+  return board.calculateFen()
 }
 
 Game.prototype.start = function start () {

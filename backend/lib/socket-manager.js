@@ -60,7 +60,7 @@ function initSocket (ghid, io) {
             console.log(_.includes(moves, move.san))
             if (_.includes(moves, move.san)) {
               game.engine.move(move.san)
-              io.emit('board.update', { fen: game.fogOfWar() })
+              io.emit('board.update', { fen: game.fen(), fog: game.fogOfWar() })
               console.log(game.engine.ascii())
             }
           }
