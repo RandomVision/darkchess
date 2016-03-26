@@ -115,6 +115,13 @@ window.setInterval(function(){
     else if (whoami==="b"){
       board.orientation("black");
     }
+    
+    if (actual_turn===whoami){
+      $('#turno').html("E' il tuo turno!");
+    }
+    else{
+      $('#turno').html("E' il turno avversario..."); 
+    }
   },
   error: function(XMLHttpRequest, textStatus, errorThrown) {}
   })
