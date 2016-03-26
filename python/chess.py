@@ -5,6 +5,7 @@ class Game():
 		self.turn = 1
 		self.actual_player = "w"
 		self.board = ["rnbqkbnr","pppppppp","........","........","........","........","PPPPPPPP","RNBQKBNR"]
+		self.mangiati = ""
 
 	def end(self):
 		white=False
@@ -50,7 +51,7 @@ class Game():
 			out+="/"
 		out=out[:-1]
 
-		out+="#"+self.actual_player+"#"+player
+		out+="#"+self.actual_player+"#"+player+"#"+self.mangiati
 		return out
 
 	def get(self,pos):
@@ -62,8 +63,12 @@ class Game():
 		else:
 			return "!"
 
-	def set(self,pos,piece):
+	def set(self,pos,piece,add_to_mangiati=False):
 		#promote pawn to queen
+		if add_to_mangiati:
+			pp=self.get(pos)
+			if not(pp in [".","!"]):
+				self.mangiati+=pp
 		if pos[1]==1 and piece=="p":
 			piece="q"
 		elif pos[1]==8 and piece=="P":
@@ -406,7 +411,7 @@ class Game():
 			return
 
 		if end in self.moves(start):
-			self.set(end,self.get(start))
+			self.set(end,self.get(start),True)
 			self.set(start,".")
 			self.changeplayer()
 		else:

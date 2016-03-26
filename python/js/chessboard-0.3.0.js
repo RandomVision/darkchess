@@ -8,10 +8,10 @@
  * Date: 10 Aug 2013
  */
 
+MANGIATI={}
 // start anonymous scope
 ;(function() {
 'use strict';
-
 //------------------------------------------------------------------------------
 // Chess Util Functions
 //------------------------------------------------------------------------------
@@ -966,13 +966,17 @@ function calculateAnimations(pos1, pos2) {
 //------------------------------------------------------------------------------
 
 function drawPositionInstant() {
+
   // clear the board
   boardEl.find('.' + CSS.piece).remove();
-
+  
+  $('#mangiati').empty(); 
+  for (var k in MANGIATI){
+    $('#mangiati').append(buildPiece(MANGIATI[k])); 
+  }
   // add the pieces
   for (var i in CURRENT_POSITION) {
     if (CURRENT_POSITION.hasOwnProperty(i) !== true) continue;
-
     $('#' + SQUARE_ELS_IDS[i]).append(buildPiece(CURRENT_POSITION[i]));
   }
 }
@@ -1712,5 +1716,7 @@ return widget;
 // expose util functions
 window.ChessBoard.fenToObj = fenToObj;
 window.ChessBoard.objToFen = objToFen;
+window.ChessBoard.mangiati = function(ciao){
+  MANGIATI=ciao};
 
 })(); // end anonymous wrapper

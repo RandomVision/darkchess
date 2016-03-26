@@ -122,6 +122,17 @@ window.setInterval(function(){
     else{
       $('#turno').html("E' il turno avversario..."); 
     }
+    mangiati=[]
+    for (var temp in data[3]){
+      if (data[3][temp]==data[3][temp].toUpperCase()){
+        mangiati.push("w"+data[3][temp])
+      }
+      else{
+       mangiati.push("b"+data[3][temp].toUpperCase()) 
+      }
+    }
+    
+    ChessBoard.mangiati(mangiati)
   },
   error: function(XMLHttpRequest, textStatus, errorThrown) {}
   })
