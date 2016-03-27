@@ -90,7 +90,7 @@ var onSnapEnd = function() {
 
 var cfg = {
   draggable: true,
-  position: 'start',
+  position: "",
   onDragStart: onDragStart,
   onDrop: onDrop,
   onMouseoutSquare: onMouseoutSquare,
