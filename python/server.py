@@ -3,31 +3,68 @@ import random
 from BaseHTTPServer import BaseHTTPRequestHandler,HTTPServer
 import chess
 import time
-
+import urlparse
 
 PORT_NUMBER = 8888
 
-player_white=None
-player_black=None
-game=chess.Game()
+games = {}
+player_ids = []
 
-def player(address):
-    if player_white==address:
+def generate_new_game():
+    actual_name = 'a'
+    while actual_name in games.keys():
+        last_letter = ord(actual_name[-1])+1
+        if last_letter > 122:
+            actual_name[-1] ='a'
+            last_letter = 97
+        else:
+            actual_name = actual_name[:-1]
+        actual_name += chr(last_letter)
+
+    games[actual_name] = [chess.Game(),None,None]
+
+    return actual_name
+
+def generate_player_id():
+    actual_name = 'aaa'
+    while actual_name in player_ids:
+        last_letter = ord(actual_name[-1])+1
+        if last_letter > 122:
+            actual_name[-1] ='a'
+            last_letter = 97
+        else:
+            actual_name = actual_name[:-1]
+        actual_name += chr(last_letter)
+
+    player_ids.append(actual_name)
+
+    return actual_name
+
+def player(game, address):
+    if game[1]==address:
         return "w"
-    elif player_black==address:
+    elif game[2]==address:
         return "b"
     else:
         return "none"
 
-
 class myHandler(BaseHTTPRequestHandler):
     def do_CHESS(self):
-        global player_white,player_black,game
-        if self.path=="/update":
+        global games
+        if self.path[-7:]=="/update":
+            game_id = self.path.split('/')[0] # /a/update
+
             self.send_response(200)
             self.send_header("Content-type", "text/html")
             self.end_headers()
-            p = player(self.client_address[0])
+
+            if not game_id in games.keys():
+                self.wfile.write("game not found")
+                return
+
+            game = games[game_id]
+            
+            p = player(game,self.client_address[0])
             if not p=="none":
                 self.wfile.write(game.to_fen(p))
             elif self.client_address[0]==player_white:
@@ -52,21 +89,55 @@ class myHandler(BaseHTTPRequestHandler):
             self.send_header("Content-type", "text/html")
             self.end_headers()
             p = player(self.client_address[0])
-            
             game.move(data[0],data[1])
-            
             self.wfile.write(game.to_fen(p))
 
     def do_GET(self):
-        if self.path=="/":
+        if self.path[0:6] == "/game/":
+            url = urlparse.urlparse(self.path)
+            url_params = urlparse.parse_qs(url.query)
+            
+            player_id = url_params["player_id"]
+            game_id = url.path[6:]
+
             self.send_response(200)
             self.send_header('Content-type','text/html')
             self.end_headers()
-            in_file=open("index.html","r")
-            data = in_file.read()
-            in_file.close()
-            # Send the html message
-            self.wfile.write(data)
+
+            if game_id in games.keys():
+                if games[game_id][1]==None:
+                    games[game_id][1]=player_id
+                elif games[game_id][2]==None:
+                    games[game_id][2]=player_id
+                else:
+                    return self.wfile.write('sorry, the game is full')    
+                in_file=open("index.html","r")
+                data = in_file.read()
+                in_file.close()
+                # Send the html message
+                self.wfile.write(data)
+            else:
+                self.wfile.write('game not found')
+        elif self.path[0:5] == '/join':
+            url = urlparse.urlparse(self.path)
+            game_id = url.path[6:]
+
+            # generata hash for new user
+            self.send_response(200)
+            self.send_header('Content-type','text/html')
+            self.end_headers()
+            player_id = generate_player_id()
+            self.wfile.write('Joined game. <a href="/game/'+game_id+'?player_id='+player_id+'">Go to game</a>')
+        elif self.path == '/new':
+            self.send_response(200)
+            self.send_header('Content-type','text/html')
+            self.end_headers()
+            # New game logic!
+            new_game_hash=generate_new_game()
+            games[new_game_hash][1]=self.client_address[0]
+            # self.wfile.write('')
+            player_id = generate_player_id()
+            self.wfile.write('New game created. <a href="/game/'+new_game_hash+'?player_id='+player_id+'">Go to game</a>')
         else:
             test=self.path.split(".")[-1]
             try:
