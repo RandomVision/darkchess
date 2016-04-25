@@ -4,58 +4,131 @@ from BaseHTTPServer import BaseHTTPRequestHandler,HTTPServer
 import chess
 import time
 
+games={}
+players={}
+waiting_player=None
 
 PORT_NUMBER = 8888
 
-player_white=None
-player_black=None
-game=chess.Game()
+def generate_hash():
+    out=""
+    for i in range(10):
+        out+=chr(random.randint(98,122))
+    return out
 
-def player(address):
-    if player_white==address:
-        return "w"
-    elif player_black==address:
-        return "b"
-    else:
-        return "none"
+def newPlayer():
+    new_id=generate_hash()
+    while new_id in players.keys():
+        new_id=generate_hash()
 
+    players[new_id]=None
+    return new_id
+
+def newGame(player):
+    new_id=generate_hash()
+    while new_id in games.keys():
+        new_id=generate_hash()
+
+    games[new_id]=[chess.Game(),player,None]
+    return new_id
 
 class myHandler(BaseHTTPRequestHandler):
     def do_CHESS(self):
-        global player_white,player_black,game
-        if self.path=="/update":
+        global waiting_player
+        if self.path[:7]=="/update":
             self.send_response(200)
             self.send_header("Content-type", "text/html")
             self.end_headers()
-            p = player(self.client_address[0])
-            if not p=="none":
-                self.wfile.write(game.to_fen(p))
-            elif self.client_address[0]==player_white:
-                self.wfile.write(game.to_fen("w"))
-            elif self.client_address[0]==player_black:
-                self.wfile.write(game.to_fen("b"))
-            elif player_white==None:
-                player_white=self.client_address[0]
-                print "white is "+str(self.client_address[0])
-                self.wfile.write(game.to_fen("w"))
-            elif player_black==None:
-                player_black=self.client_address[0]
-                print "black is "+str(self.client_address[0])
-                self.wfile.write(game.to_fen("b"))
+
+            player=self.path.split("?")[1]
+            
+            if not player in players.keys():
+                self.wfile.write("none")
+                return
+            if not players[player] in games.keys():
+                self.wfile.write("none")
+                return
+
+            game=games[players[player]]
+
+            if game[1]==player:
+                self.wfile.write(player+","+players[player]+","+game[0].to_fen("w"))
+            elif game[2]==player:
+                self.wfile.write(player+","+players[player]+","+game[0].to_fen("b"))
             else:
-                self.wfile.write("the game is full")
+                self.wfile.write("none")
+                return
+        elif self.path[:10]=="/automatch":
+            player=self.path.split("?")[1]
+            if player=="" or not player in players.keys():
+                player=newPlayer()
+
+            if waiting_player==None or waiting_player==player:
+                waiting_player=player
+            else:
+                game=newGame(waiting_player)
+                players[waiting_player]=game
+                games[game][2]=player
+                players[player]=game
+                waiting_player=None
+
+            self.wfile.write(player+",")
+
+        elif self.path[:8]=="/newgame":
+            player=self.path.split("?")[1]
+            if player=="" or not player in players.keys():
+                player=newPlayer()
+            game=newGame(player)
+            players[player]=game
+            self.wfile.write(player+","+game)
+        elif self.path[:9]=="/joingame":
+            game=self.path.split("?")[2]
+            if game in games.keys():
+                player=self.path.split("?")[1]
+                if player=="" or not player in players.keys():
+                    player=newPlayer()
+                if games[game][1] in [None,player]:
+                    games[game][1]=player
+                    players[player]=game
+                    self.wfile.write(player+","+game)
+                    return
+                elif games[game][2] in [None,player]:
+                    games[game][2]=player
+                    players[player]=game
+                    self.wfile.write(player+","+game)
+                    return
+            
+            self.wfile.write("none,cannot join game "+game)
+            return                                
         else:
-            if game.end():
-                game=chess.Game()
-            data = self.path[1:].split(".")
+            player=self.path.split("?")[1]
+            
+            if not player in players.keys():
+                self.wfile.write("none")
+                return
+            if not players[player] in games.keys():
+                self.wfile.write("none")
+                return
+
+            game=games[players[player]]
+
+            if game[0].end():
+                game[0]=chess.Game()
+
+            data = self.path[1:].split("?")[0].split(".")
             self.send_response(200)
             self.send_header("Content-type", "text/html")
             self.end_headers()
-            p = player(self.client_address[0])
             
-            game.move(data[0],data[1])
+            game[0].move(data[0],data[1])
             
-            self.wfile.write(game.to_fen(p))
+            if game[1]==player:
+                self.wfile.write(player+","+players[player]+","+game[0].to_fen("w"))
+            elif game[2]==player:
+                self.wfile.write(player+","+players[player]+","+game[0].to_fen("b"))
+            else:
+                self.wfile.write("none")
+                return
 
     def do_GET(self):
         if self.path=="/":
