@@ -15,7 +15,6 @@ class Game():
 				black=True
 			if self.board[i].find("K")>-1:
 				white=True
-		print black,white
 		return not (black and white)
 
 	def calculate_fog(self,player):
@@ -403,16 +402,11 @@ class Game():
 		
 		if not (0<start[0]<9 and 0<start[1]<9 and 0<end[0]<9 and 0<end[1]<9):
 			return
-		
-		print "moving  "+str(start)+"->"+str(end)
 
 		if not self.owner(start)==self.actual_player:
-			print "not "+self.owner(start)+" turn"
 			return
 
 		if end in self.moves(start):
 			self.set(end,self.get(start),True)
 			self.set(start,".")
 			self.changeplayer()
-		else:
-			print "cannot move "+str(start)+"->"+str(end)
