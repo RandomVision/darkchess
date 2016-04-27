@@ -4,8 +4,9 @@ from BaseHTTPServer import BaseHTTPRequestHandler,HTTPServer
 import chess
 import time
 import urlparse
+import os
 
-PORT_NUMBER = 80
+PORT_NUMBER = int(os.getenv('PORT', 80))
 
 games = {}
 player_ids = []
