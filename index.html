@@ -3,16 +3,25 @@
 <head>
   <title>DarkChess</title>
   
-  <link rel="stylesheet" type="text/css" href="/css/chessboard-0.3.0.css">
+  <link rel="stylesheet" type="text/css" href="css/chessboard-0.3.0.css">
 
-  <script type="text/javascript" src="/js/jquery.min.js"></script>
+  <script type="text/javascript" src="js/jquery.min.js"></script>
 </head>
 <body>
-	<div id="turno">E' il tuo turno</div>
+	<div id="turno"></div>
 	<div id="mangiati"></div>
 	<div id="board" style="width: 400px"></div>
+	</br>
+	<div>
+		<button onclick= "autoMatch()" id = "automatch" type="button">Auto Match!</button>
+		<button onclick= "newGame()" id = "newgame" type="button">Private Game!</button>
+		<button onclick= "joinGame()" type="button">Join Game-></button>
+		<input id="joingame" type="text" name="idgame" value="">		
+	</div>
 
-	<script type="text/javascript" src="/js/chessboard-0.3.0.js"></script>
-  <script type="text/javascript" src="/js/main.js"></script>
+	<script type="text/javascript" src="js/chessboard-0.3.0.js"></script>
+  	<script type="text/javascript" src="js/main.js"></script>
+  	
+   
 </body>
 </html>

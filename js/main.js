@@ -1,22 +1,74 @@
 function getResponseFromServer(data_to_send) {
     $.ajax({
 	type: 'CHESS',
-	url: window.location.href+data_to_send,
+	url: window.location.href+data_to_send+"?"+my_hash+"?"+game,
 	timeout: 15000,
 	success: function(data) {
-		data=data.split("#");
-		board.position(data[0]);
-		actual_turn=data[1]
-		whoami=data[2]
+    if (data_to_send==="newgame" || data_to_send==="joingame"){
+      data=data.split(",")
+      if (data[0]=="none"){
+        alert(data[1])
+      }
+      else{
+        my_hash=data[0]
+        game=data[1]
+        $('#joingame').val(game)
+      }
+    }
+    else if(data_to_send==="automatch"){
+      data=data.split(",")
+      my_hash=data[0]
+    }
+    else{
+      data=data.split(",")
+      my_hash=data[0]
+      game=data[1]
+  		data=data[2].split("#");
+  		board.position(data[0]);
+  		actual_turn=data[1]
+  		whoami=data[2]
+      $('#joingame').val(game)
+    }
 	},
 	error: function(XMLHttpRequest, textStatus, errorThrown) {}
 	})
+}
+
+function newGame(){
+  if (game!==""){
+    if (!confirm("Loose your current game?")){
+      return
+    }
+  }
+  
+  getResponseFromServer("newgame")
+}
+
+function joinGame() {
+  if (game!==""){
+    if (!confirm("Loose your current game?")){
+      return
+    }
+  }
+  game = $('#joingame').val();
+  getResponseFromServer("joingame")
+}
+
+function autoMatch(){
+  if (game!==""){
+    if (!confirm("Loose your current game?")){
+      return
+    }
+  }
+  getResponseFromServer("automatch")
 }
 
 
 var board
 var whoami="w"
 var actual_turn="w"
+var my_hash=""
+var game=""
 
 var removeGreySquares = function() {
   $('#board .square-55d63').css('background', '');
@@ -99,14 +151,24 @@ var cfg = {
 };
 board = ChessBoard('board', cfg);
 
+
 window.setInterval(function(){
   $.ajax({
   type: 'CHESS',
-  url: window.location.href+"update",
+  url: window.location.href+"update?"+my_hash+"?"+game,
   timeout: 15000,
   success: function(data) {
-    data=data.split("#");
-    board.position(data[0]);
+    if (data==="none"){
+      return
+    }
+    
+    data=data.split(",")
+      my_hash=data[0]
+      game=data[1]
+      data=data[2].split("#");
+    if (!(data[0]===board.position("fen").replace(/o/g,"?"))){
+      board.position(data[0]);
+    }
     actual_turn=data[1]
     whoami=data[2]
     if (whoami==="w"){
@@ -137,4 +199,3 @@ window.setInterval(function(){
   error: function(XMLHttpRequest, textStatus, errorThrown) {}
   })
 }, 1000);
-
