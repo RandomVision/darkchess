@@ -1,6 +1,6 @@
 function getResponseFromServer(data_to_send) {
     $.ajax({
-	type: 'CHESS',
+	type: 'GET',
 	url: window.location.href+data_to_send+"?"+my_hash+"?"+game,
 	timeout: 15000,
 	success: function(data) {
@@ -106,7 +106,7 @@ var onDragStart = function(source, piece) {
 };
 
 var onDrop = function(source, target) {
-  response = getResponseFromServer(source+"."+target);
+  response = getResponseFromServer("move?"+source+"."+target);
   
   removeGreySquares();  
 
@@ -154,7 +154,7 @@ board = ChessBoard('board', cfg);
 
 window.setInterval(function(){
   $.ajax({
-  type: 'CHESS',
+  type: 'GET',
   url: window.location.href+"update?"+my_hash+"?"+game,
   timeout: 15000,
   success: function(data) {
@@ -198,4 +198,4 @@ window.setInterval(function(){
   },
   error: function(XMLHttpRequest, textStatus, errorThrown) {}
   })
-}, 1000);
+}, 5000);

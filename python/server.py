@@ -3,12 +3,13 @@ import random
 from BaseHTTPServer import BaseHTTPRequestHandler,HTTPServer
 import chess
 import time
+import os
 
 games={}
 players={}
 waiting_player=None
 
-PORT_NUMBER = 8888
+PORT_NUMBER = int(os.getenv('PORT', 80))
 
 def generate_hash():
     out=""
@@ -33,9 +34,19 @@ def newGame(player):
     return new_id
 
 class myHandler(BaseHTTPRequestHandler):
-    def do_CHESS(self):
+    def do_GET(self):
         global waiting_player
-        if self.path[:7]=="/update":
+        if self.path=="/":
+            self.send_response(200)
+            self.send_header('Content-type','text/html')
+            self.end_headers()
+            in_file=open("index.html","r")
+            data = in_file.read()
+            in_file.close()
+            # Send the html message
+            self.wfile.write(data)
+
+        elif self.path[:7]=="/update":
             self.send_response(200)
             self.send_header("Content-type", "text/html")
             self.end_headers()
@@ -100,8 +111,8 @@ class myHandler(BaseHTTPRequestHandler):
             
             self.wfile.write("none,cannot join game "+game)
             return                                
-        else:
-            player=self.path.split("?")[1]
+        elif self.path[:5]=="/move":
+            player=self.path.split("?")[2]
             
             if not player in players.keys():
                 self.wfile.write("none")
@@ -115,7 +126,7 @@ class myHandler(BaseHTTPRequestHandler):
             if game[0].end():
                 game[0]=chess.Game()
 
-            data = self.path[1:].split("?")[0].split(".")
+            data = self.path.split("?")[1].split(".")
             self.send_response(200)
             self.send_header("Content-type", "text/html")
             self.end_headers()
@@ -129,17 +140,6 @@ class myHandler(BaseHTTPRequestHandler):
             else:
                 self.wfile.write("none")
                 return
-
-    def do_GET(self):
-        if self.path=="/":
-            self.send_response(200)
-            self.send_header('Content-type','text/html')
-            self.end_headers()
-            in_file=open("index.html","r")
-            data = in_file.read()
-            in_file.close()
-            # Send the html message
-            self.wfile.write(data)
         else:
             test=self.path.split(".")[-1]
             try:
