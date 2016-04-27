@@ -3,12 +3,13 @@ import random
 from BaseHTTPServer import BaseHTTPRequestHandler,HTTPServer
 import chess
 import time
+import os
 
 games={}
 players={}
 waiting_player=None
 
-PORT_NUMBER = 8888
+PORT_NUMBER = int(os.getenv('PORT', 80))
 
 def generate_hash():
     out=""
